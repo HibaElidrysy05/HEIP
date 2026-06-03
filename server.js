@@ -4,7 +4,8 @@ const flash = require('connect-flash');
 const path = require('path');
 const fs = require('fs');
 const sequelize = require('./config/database');
-const { Category, Banner, Product, Setting } = require('./models');
+const { User, Category, Banner, Product, Setting } = require('./models');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -71,10 +72,45 @@ app.use((err, req, res, next) => {
 });
 
 // Sync database and start server
+async function autoSeed() {
+  const userCount = await User.count();
+  if (userCount > 0) return;
+  console.log('Empty database — seeding default data...');
+  const { Category, Product, Banner, Setting } = require('./models');
+  const hashed = await bcrypt.hash('admin123', 10);
+  await User.create({ username: 'admin', email: 'admin@heip.com', password: hashed, fullName: 'Admin', role: 'admin' });
+  await User.create({ username: 'demo', email: 'demo@heip.com', password: await bcrypt.hash('user123', 10), fullName: 'Demo User', role: 'user' });
+  const cats = await Category.bulkCreate([
+    { name: 'E-books', slug: 'ebooks', order: 1 }, { name: 'Templates', slug: 'templates', order: 2 },
+    { name: 'Software', slug: 'software', order: 3 }, { name: 'Graphics', slug: 'graphics', order: 4 },
+    { name: 'Courses', slug: 'courses', order: 5 }
+  ]);
+  await Product.bulkCreate([
+    { title: 'Ultimate Design Bundle', slug: 'ultimate-design-bundle', description: '500+ icons, 50 templates, 20 mockups. Premium design assets for web and mobile.', shortDescription: '500+ icons, 50 templates', price: 49.99, previousPrice: 99.99, categoryId: cats[1].id, featured: true, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Personal', 'Commercial', 'Extended'] }]), salesCount: 127 },
+    { title: 'Mastering React - Complete Guide', slug: 'mastering-react-guide', description: 'Complete React e-book. Hooks, Redux, Next.js, testing, deployment. 20h video + 100 exercises.', shortDescription: '20h video, 100+ exercises', price: 29.99, previousPrice: 59.99, categoryId: cats[0].id, featured: true, salesCount: 89 },
+    { title: 'Photo Editing Presets Pack', slug: 'photo-editing-presets', description: '200 professional Lightroom & Photoshop presets. Portrait, landscape, wedding, street.', shortDescription: '200 presets for LR & PS', price: 19.99, previousPrice: 39.99, categoryId: cats[3].id, featured: true, salesCount: 245 },
+    { title: 'SEO Mastery Course', slug: 'seo-mastery-course', description: 'Complete SEO course: on-page, off-page, technical, local SEO. Certification included.', shortDescription: 'SEO course with certification', price: 39.99, previousPrice: 79.99, categoryId: cats[4].id, featured: true, options: JSON.stringify([{ name: 'Access Level', type: 'select', values: ['Basic', 'Premium', 'Enterprise'] }]), salesCount: 56 },
+    { title: 'Project Management Software', slug: 'project-management-software', description: 'Self-hosted PM software. Task management, Gantt charts, time tracking, unlimited users.', shortDescription: 'Self-hosted, unlimited users', price: 99.99, previousPrice: 199.99, categoryId: cats[2].id, salesCount: 34 },
+    { title: 'Font Collection - 500 Premium', slug: 'font-collection-premium', description: '500 premium fonts for commercial use. Serif, sans-serif, script, display, handwritten.', shortDescription: '500 premium fonts', price: 14.99, previousPrice: 29.99, categoryId: cats[3].id, salesCount: 412 },
+    { title: 'JS Advanced Concepts', slug: 'javascript-advanced-concepts', description: 'Deep dive: closures, prototypes, async/await, event loop, design patterns.', shortDescription: 'Advanced JS deep dive', price: 24.99, previousPrice: 49.99, categoryId: cats[0].id, salesCount: 178 },
+    { title: 'WordPress Premium Theme', slug: 'wordpress-premium-theme', description: 'Modern responsive WP theme. Page builder, WooCommerce, lifetime updates.', shortDescription: 'Modern WP theme', price: 34.99, previousPrice: 69.99, categoryId: cats[1].id, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Regular', 'Extended'] }]), salesCount: 67 }
+  ]);
+  await Banner.bulkCreate([
+    { type: 'text', title: 'Welcome to HEIP', content: 'Premium digital products for creators and professionals.', link: '/search', linkText: 'Browse Products', bgColor: '#0a0a0a', order: 1 },
+    { type: 'text', title: 'Summer Sale - 50% Off', content: 'Limited time offer on all products.', link: '/search', linkText: 'Shop Now', bgColor: '#1a1a1a', order: 2 }
+  ]);
+  await Setting.bulkCreate([
+    { key: 'site_name', value: 'HEIP' }, { key: 'site_description', value: 'Premium digital products marketplace.' },
+    { key: 'footer_email', value: 'support@heip.com' }, { key: 'contact_email', value: 'hello@heip.com' }
+  ]);
+  console.log('Default data created!');
+}
+
 async function start() {
   try {
     await sequelize.sync({ force: false });
     console.log('Database synced');
+    await autoSeed();
     app.listen(PORT, () => {
       console.log('HEIP server running on http://localhost:' + PORT);
     });
