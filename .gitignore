@@ -1,8 +1,9 @@
 node_modules/
 database.sqlite
-public/uploads/products/*
+public/uploads/products/*.jpg
+public/uploads/products/*.png
+public/uploads/products/*.jpeg
 public/uploads/banners/*
-!public/uploads/products/.gitkeep
 !public/uploads/banners/.gitkeep
 server.log
 server.err

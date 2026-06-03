@@ -107,14 +107,14 @@ async function autoSeed() {
     { name: 'Courses', slug: 'courses', order: 5 }
   ]);
   await Product.bulkCreate([
-    { title: 'Ultimate Design Bundle', slug: 'ultimate-design-bundle', description: '500+ icons, 50 templates, 20 mockups. Premium design assets for web and mobile.', shortDescription: '500+ icons, 50 templates', price: 49.99, previousPrice: 99.99, categoryId: cats[1].id, featured: true, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Personal', 'Commercial', 'Extended'] }]), salesCount: 127 },
-    { title: 'Mastering React - Complete Guide', slug: 'mastering-react-guide', description: 'Complete React e-book. Hooks, Redux, Next.js, testing, deployment. 20h video + 100 exercises.', shortDescription: '20h video, 100+ exercises', price: 29.99, previousPrice: 59.99, categoryId: cats[0].id, featured: true, salesCount: 89 },
-    { title: 'Photo Editing Presets Pack', slug: 'photo-editing-presets', description: '200 professional Lightroom & Photoshop presets. Portrait, landscape, wedding, street.', shortDescription: '200 presets for LR & PS', price: 19.99, previousPrice: 39.99, categoryId: cats[3].id, featured: true, salesCount: 245 },
-    { title: 'SEO Mastery Course', slug: 'seo-mastery-course', description: 'Complete SEO course: on-page, off-page, technical, local SEO. Certification included.', shortDescription: 'SEO course with certification', price: 39.99, previousPrice: 79.99, categoryId: cats[4].id, featured: true, options: JSON.stringify([{ name: 'Access Level', type: 'select', values: ['Basic', 'Premium', 'Enterprise'] }]), salesCount: 56 },
-    { title: 'Project Management Software', slug: 'project-management-software', description: 'Self-hosted PM software. Task management, Gantt charts, time tracking, unlimited users.', shortDescription: 'Self-hosted, unlimited users', price: 99.99, previousPrice: 199.99, categoryId: cats[2].id, salesCount: 34 },
-    { title: 'Font Collection - 500 Premium', slug: 'font-collection-premium', description: '500 premium fonts for commercial use. Serif, sans-serif, script, display, handwritten.', shortDescription: '500 premium fonts', price: 14.99, previousPrice: 29.99, categoryId: cats[3].id, salesCount: 412 },
-    { title: 'JS Advanced Concepts', slug: 'javascript-advanced-concepts', description: 'Deep dive: closures, prototypes, async/await, event loop, design patterns.', shortDescription: 'Advanced JS deep dive', price: 24.99, previousPrice: 49.99, categoryId: cats[0].id, salesCount: 178 },
-    { title: 'WordPress Premium Theme', slug: 'wordpress-premium-theme', description: 'Modern responsive WP theme. Page builder, WooCommerce, lifetime updates.', shortDescription: 'Modern WP theme', price: 34.99, previousPrice: 69.99, categoryId: cats[1].id, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Regular', 'Extended'] }]), salesCount: 67 }
+    { title: 'Ultimate Design Bundle', slug: 'ultimate-design-bundle', description: '500+ icons, 50 templates, 20 mockups. Premium design assets for web and mobile.', shortDescription: '500+ icons, 50 templates', price: 49.99, previousPrice: 99.99, image: '/uploads/products/ultimate-design-bundle.svg', categoryId: cats[1].id, featured: true, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Personal', 'Commercial', 'Extended'] }]), salesCount: 127 },
+    { title: 'Mastering React - Complete Guide', slug: 'mastering-react-guide', description: 'Complete React e-book. Hooks, Redux, Next.js, testing, deployment. 20h video + 100 exercises.', shortDescription: '20h video, 100+ exercises', price: 29.99, previousPrice: 59.99, image: '/uploads/products/mastering-react-guide.svg', categoryId: cats[0].id, featured: true, salesCount: 89 },
+    { title: 'Photo Editing Presets Pack', slug: 'photo-editing-presets', description: '200 professional Lightroom & Photoshop presets. Portrait, landscape, wedding, street.', shortDescription: '200 presets for LR & PS', price: 19.99, previousPrice: 39.99, image: '/uploads/products/photo-editing-presets.svg', categoryId: cats[3].id, featured: true, salesCount: 245 },
+    { title: 'SEO Mastery Course', slug: 'seo-mastery-course', description: 'Complete SEO course: on-page, off-page, technical, local SEO. Certification included.', shortDescription: 'SEO course with certification', price: 39.99, previousPrice: 79.99, image: '/uploads/products/seo-mastery-course.svg', categoryId: cats[4].id, featured: true, options: JSON.stringify([{ name: 'Access Level', type: 'select', values: ['Basic', 'Premium', 'Enterprise'] }]), salesCount: 56 },
+    { title: 'Project Management Software', slug: 'project-management-software', description: 'Self-hosted PM software. Task management, Gantt charts, time tracking, unlimited users.', shortDescription: 'Self-hosted, unlimited users', price: 99.99, previousPrice: 199.99, image: '/uploads/products/project-management-software.svg', categoryId: cats[2].id, salesCount: 34 },
+    { title: 'Font Collection - 500 Premium', slug: 'font-collection-premium', description: '500 premium fonts for commercial use. Serif, sans-serif, script, display, handwritten.', shortDescription: '500 premium fonts', price: 14.99, previousPrice: 29.99, image: '/uploads/products/font-collection-premium.svg', categoryId: cats[3].id, salesCount: 412 },
+    { title: 'JS Advanced Concepts', slug: 'javascript-advanced-concepts', description: 'Deep dive: closures, prototypes, async/await, event loop, design patterns.', shortDescription: 'Advanced JS deep dive', price: 24.99, previousPrice: 49.99, image: '/uploads/products/javascript-advanced-concepts.svg', categoryId: cats[0].id, salesCount: 178 },
+    { title: 'WordPress Premium Theme', slug: 'wordpress-premium-theme', description: 'Modern responsive WP theme. Page builder, WooCommerce, lifetime updates.', shortDescription: 'Modern WP theme', price: 34.99, previousPrice: 69.99, image: '/uploads/products/wordpress-premium-theme.svg', categoryId: cats[1].id, options: JSON.stringify([{ name: 'License', type: 'select', values: ['Regular', 'Extended'] }]), salesCount: 67 }
   ]);
   await Banner.bulkCreate([
     { type: 'text', title: 'Welcome to HEIP', content: 'Premium digital products for creators and professionals.', link: '/search', linkText: 'Browse Products', bgColor: '#0a0a0a', order: 1 },
@@ -124,6 +124,24 @@ async function autoSeed() {
     { key: 'site_name', value: 'HEIP' }, { key: 'site_description', value: 'Premium digital products marketplace.' },
     { key: 'footer_email', value: 'support@heip.com' }, { key: 'contact_email', value: 'hello@heip.com' }
   ]);
+  // Add images to existing products that lack them
+  const imgless = await Product.findAll({ where: { image: null } });
+  for (const p of imgless) {
+    const imgMap = {
+      'ultimate-design-bundle': '/uploads/products/ultimate-design-bundle.svg',
+      'mastering-react-guide': '/uploads/products/mastering-react-guide.svg',
+      'photo-editing-presets': '/uploads/products/photo-editing-presets.svg',
+      'seo-mastery-course': '/uploads/products/seo-mastery-course.svg',
+      'project-management-software': '/uploads/products/project-management-software.svg',
+      'font-collection-premium': '/uploads/products/font-collection-premium.svg',
+      'javascript-advanced-concepts': '/uploads/products/javascript-advanced-concepts.svg',
+      'wordpress-premium-theme': '/uploads/products/wordpress-premium-theme.svg'
+    };
+    if (imgMap[p.slug]) {
+      await p.update({ image: imgMap[p.slug] });
+    }
+  }
+  if (imgless.length) console.log('Updated ' + imgless.length + ' products with images');
   console.log('Default data created!');
 }
 
