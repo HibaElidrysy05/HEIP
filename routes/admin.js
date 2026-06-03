@@ -172,10 +172,38 @@ router.post('/orders/update-status/:id', async (req, res) => {
   res.redirect('/admin/orders/' + req.params.id);
 });
 
-// Users
+// Users (admin notification AJAX endpoint)
+router.post('/notifications/mark-read/:id', async (req, res) => {
+  try {
+    const where = { id: req.params.id };
+    if (req.session.userRole !== 'admin') {
+      where.userId = req.session.userId;
+      where.forAdmin = false;
+    }
+    await Notification.update({ isRead: true }, { where });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post('/notifications/mark-all-read', async (req, res) => {
+  try {
+    const where = req.session.userRole === 'admin' ? { forAdmin: true } : { userId: req.session.userId, forAdmin: false };
+    await Notification.update({ isRead: true }, { where });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
 router.get('/users', async (req, res) => {
   const users = await User.findAll({ order: [['createdAt', 'DESC']] });
   res.render('admin/users', { title: 'Users - HEIP Admin', users });
+});
+
+router.get('/users/new', async (req, res) => {
+  res.render('admin/user-form', { title: 'New User - HEIP Admin', user: null });
 });
 
 router.get('/users/edit/:id', async (req, res) => {
@@ -187,14 +215,30 @@ router.get('/users/edit/:id', async (req, res) => {
 router.post('/users/save', async (req, res) => {
   try {
     const { id, username, email, fullName, phone, address, role, isActive, password } = req.body;
-    const user = await User.findByPk(id);
-    if (user) {
-      const update = { username, email, fullName, phone, address, role, isActive: isActive ? true : false };
-      if (password && password.length >= 6) update.password = await bcrypt.hash(password, 10);
-      await user.update(update);
-      req.flash('success', 'User updated');
+    if (id) {
+      const user = await User.findByPk(id);
+      if (user) {
+        const update = { username, email, fullName, phone, address, role, isActive: isActive ? true : false };
+        if (password && password.length >= 6) update.password = await bcrypt.hash(password, 10);
+        await user.update(update);
+        req.flash('success', 'User updated');
+      }
+    } else {
+      if (!password || password.length < 6) {
+        req.flash('error', 'Password required (min 6 chars)');
+        return res.redirect('/admin/users/new');
+      }
+      const existing = await User.findOne({ where: { email } });
+      if (existing) { req.flash('error', 'Email already taken'); return res.redirect('/admin/users/new'); }
+      const existingU = await User.findOne({ where: { username } });
+      if (existingU) { req.flash('error', 'Username already taken'); return res.redirect('/admin/users/new'); }
+      await User.create({
+        username, email, password: await bcrypt.hash(password, 10),
+        fullName, phone, address, role: role || 'user', isActive: isActive !== undefined ? true : false
+      });
+      req.flash('success', 'User created');
     }
-  } catch (err) { req.flash('error', 'Failed to update user'); }
+  } catch (err) { req.flash('error', 'Failed to save user'); }
   res.redirect('/admin/users');
 });
 

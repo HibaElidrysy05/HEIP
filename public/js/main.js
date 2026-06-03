@@ -92,14 +92,182 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 5000);
   });
 
+  // Notification bell dropdown
+  var notifBell = document.getElementById('notifBell');
+  var notifDropdown = document.getElementById('notifDropdown');
+  var notifWrap = document.getElementById('notifDropdownWrap');
+
+  if (notifBell && notifDropdown && notifWrap) {
+    notifBell.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      notifWrap.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!notifWrap.contains(e.target)) {
+        notifWrap.classList.remove('active');
+      }
+    });
+
+    // Mark notification as read on click
+    var notifItems = notifDropdown.querySelectorAll('.notif-dd-item');
+    notifItems.forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        var id = this.getAttribute('data-id');
+        if (id) {
+          fetch('/admin/notifications/mark-read/' + id, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+            .then(function(r) { return r.json(); })
+            .then(function(resp) {
+              if (resp.success) {
+                item.classList.remove('unread');
+                var badge = document.getElementById('notifBadge');
+                if (badge) {
+                  var count = parseInt(badge.textContent) - 1;
+                  badge.textContent = count > 0 ? count : 0;
+                  if (count <= 0) badge.style.display = 'none';
+                }
+              }
+            });
+        }
+      });
+    });
+
+    // Mark all as read
+    var markAllBtn = document.getElementById('markAllNotifRead');
+    if (markAllBtn) {
+      markAllBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('/admin/notifications/mark-all-read', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(function(r) { return r.json(); })
+          .then(function(resp) {
+            if (resp.success) {
+              notifItems.forEach(function(item) { item.classList.remove('unread'); });
+              var badge = document.getElementById('notifBadge');
+              if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+              if (markAllBtn.parentNode) markAllBtn.parentNode.removeChild(markAllBtn);
+            }
+          });
+      });
+    }
+  }
+
+  // Confirm Modal
+  var modalOverlay = null;
+
+  function showConfirmModal(message, callback) {
+    if (!modalOverlay) {
+      modalOverlay = document.createElement('div');
+      modalOverlay.className = 'modal-overlay';
+      modalOverlay.innerHTML = '<div class="modal"><div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div><h3>Are you sure?</h3><p id="confirmModalMsg"></p><div class="modal-actions"><button class="btn btn-outline" id="confirmCancel">Cancel</button><button class="btn btn-danger" id="confirmOk">Delete</button></div></div>';
+      document.body.appendChild(modalOverlay);
+
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) closeModal();
+      });
+
+      document.getElementById('confirmCancel').addEventListener('click', closeModal);
+      document.getElementById('confirmOk').addEventListener('click', function() {
+        closeModal();
+        if (window._confirmCallback) window._confirmCallback();
+      });
+    }
+    document.getElementById('confirmModalMsg').textContent = message;
+    modalOverlay.style.display = 'flex';
+    window._confirmCallback = callback;
+  }
+
+  function closeModal() {
+    if (modalOverlay) {
+      modalOverlay.style.display = 'none';
+      window._confirmCallback = null;
+    }
+  }
+
+  // Replace native confirm with modal
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('[data-confirm]');
+    if (target) {
+      e.preventDefault();
+      var message = target.getAttribute('data-confirm') || 'Are you sure?';
+      showConfirmModal(message, function() {
+        var form = target.closest('form');
+        if (form) { form.submit(); }
+        else {
+          var link = target.getAttribute('href');
+          if (link) window.location.href = link;
+        }
+      });
+    }
+  });
+
+  // Quantity increment/decrement
+  document.querySelectorAll('.qty-wrapper').forEach(function(wrapper) {
+    var form = wrapper.closest('.cart-qty-form') || wrapper.closest('form');
+    var input = wrapper.querySelector('input');
+    var minus = wrapper.querySelector('.qty-minus');
+    var plus = wrapper.querySelector('.qty-plus');
+    var debounceTimer;
+
+    function submitQty() {
+      if (form && form.classList.contains('cart-qty-form')) {
+        var val = parseInt(input.value) || 0;
+        if (val <= 0) {
+          var removeForm = form.parentNode.querySelector('form[action*="/cart/remove"]');
+          if (removeForm) removeForm.submit();
+          return;
+        }
+        var fd = new FormData(form);
+        fetch(form.action, { method: 'POST', body: new URLSearchParams(fd) })
+          .then(function() { window.location.reload(); });
+      }
+    }
+
+    if (minus && input) {
+      minus.addEventListener('click', function() {
+        var val = parseInt(input.value) || 1;
+        if (val > 1) {
+          input.value = val - 1;
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(submitQty, 300);
+        }
+      });
+    }
+
+    if (plus && input) {
+      plus.addEventListener('click', function() {
+        var val = parseInt(input.value) || 1;
+        input.value = val + 1;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(submitQty, 300);
+      });
+    }
+
+    if (input) {
+      input.addEventListener('change', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(submitQty, 300);
+      });
+    }
+  });
+
   // Add to cart (AJAX)
   var addToCartForms = document.querySelectorAll('.add-to-cart-form');
   addToCartForms.forEach(function(form) {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
+      var btn = form.querySelector('.btn-submit') || form.querySelector('button[type="submit"]');
+      if (btn && btn.classList.contains('loading')) return;
       var formData = new FormData(form);
       var data = {};
       formData.forEach(function(v, k) { data[k] = v; });
+
+      if (btn) {
+        var originalHtml = btn.innerHTML;
+        btn.classList.add('loading');
+        btn.innerHTML = '<span class="spinner"></span> Adding...';
+      }
+
       fetch('/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -107,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(function(r) { return r.json(); })
       .then(function(resp) {
+        if (btn) { btn.classList.remove('loading'); btn.innerHTML = originalHtml; }
         if (resp.success) {
           var badge = document.getElementById('cartBadge');
           if (badge) {
@@ -114,18 +283,30 @@ document.addEventListener('DOMContentLoaded', function() {
             badge.style.transform = 'scale(1.4)';
             setTimeout(function() { badge.style.transform = 'scale(1)'; }, 200);
           }
-          var flash = document.createElement('div');
-          flash.className = 'flash flash-success';
-          flash.innerHTML = '<i class="fas fa-check-circle"></i> Added to cart!';
-          var main = document.querySelector('.main-content');
-          if (main) main.prepend(flash);
-          setTimeout(function() {
-            flash.style.opacity = '0';
-            flash.style.transform = 'translateY(-10px)';
-            setTimeout(function() { if (flash.parentNode) flash.remove(); }, 300);
-          }, 3000);
+          showToast('Added to cart!', 'success');
         }
+      })
+      .catch(function() {
+        if (btn) { btn.classList.remove('loading'); btn.innerHTML = originalHtml; }
+        showToast('Failed to add to cart', 'error');
       });
     });
   });
+
+  // Toast notification system
+  function showToast(message, type) {
+    var toast = document.createElement('div');
+    toast.className = 'flash flash-' + (type || 'success');
+    var icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+    toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + message;
+    toast.style.cssText = 'position:fixed;top:90px;right:24px;max-width:360px;z-index:9999;margin:0;box-shadow:var(--shadow-lg);animation:flashIn 0.3s ease;';
+    document.body.appendChild(toast);
+    toast.addEventListener('click', function() { toast.remove(); });
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+    }, 4000);
+  }
 });

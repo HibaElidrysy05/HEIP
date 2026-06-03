@@ -47,8 +47,8 @@
                   <td><%= cat.order || 0 %></td>
                   <td><%= cat.isActive ? 'Yes' : 'No' %></td>
                   <td>
-                    <form method="POST" action="/admin/categories/delete/<%= cat.id %>" onsubmit="return confirm('Delete this category? Products will remain uncategorized.')">
-                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    <form method="POST" action="/admin/categories/delete/<%= cat.id %>">
+                      <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this category? Products will remain uncategorized."><i class="fas fa-trash"></i></button>
                     </form>
                   </td>
                 </tr>

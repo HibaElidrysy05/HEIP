@@ -85,7 +85,7 @@
                   <td><%= b.isActive ? 'Yes' : 'No' %></td>
                   <td><%= b.order || 0 %></td>
                   <td>
-                    <form method="POST" action="/admin/banners/delete/<%= b.id %>" onsubmit="return confirm('Delete this banner?')">
+                    <form method="POST" action="/admin/banners/delete/<%= b.id %>" data-confirm="Delete this banner?">
                       <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                     </form>
                   </td>

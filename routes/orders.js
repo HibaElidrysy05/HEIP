@@ -58,6 +58,32 @@ router.get('/:id/download/:itemId', isAuthenticated, async (req, res) => {
   }
 });
 
+router.post('/:id/cancel', isAuthenticated, async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      where: { id: req.params.id, userId: req.session.userId, status: 'pending' }
+    });
+    if (!order) {
+      req.flash('error', 'Order not found or cannot be cancelled');
+      return res.redirect('/account/orders');
+    }
+    await order.update({ status: 'cancelled' });
+    await (require('../models').Notification).create({
+      type: 'order_cancelled',
+      title: 'Order #' + order.orderNumber + ' Cancelled',
+      message: 'Your order has been cancelled',
+      link: '/account/orders/' + order.id,
+      forAdmin: false,
+      userId: order.userId
+    });
+    req.flash('success', 'Order cancelled');
+    res.redirect('/account/orders/' + order.id);
+  } catch (err) {
+    req.flash('error', 'Failed to cancel order');
+    res.redirect('/account/orders');
+  }
+});
+
 router.get('/:id/receipt', isAuthenticated, async (req, res) => {
   try {
     const order = await Order.findOne({

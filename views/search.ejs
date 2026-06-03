@@ -4,6 +4,16 @@
   <div class="section-title">Search Results</div>
   <div class="section-subtitle">Showing results for: "<%= query %>"</div>
 
+  <form action="/search" method="GET" class="search-filters">
+    <input type="hidden" name="q" value="<%= query %>">
+    <select name="cat" class="form-select" onchange="this.form.submit()">
+      <option value="">All Categories</option>
+      <% categories.forEach(function(cat) { %>
+        <option value="<%= cat.id %>" <%= String(selectedCat) === String(cat.id) ? 'selected' : '' %>><%= cat.name %></option>
+      <% }); %>
+    </select>
+  </form>
+
   <div class="grid">
     <% if (products.length > 0) { %>
       <% products.forEach(function(product) { %>
@@ -17,6 +27,7 @@
           <% } %>
           <div class="card-body">
             <div class="card-title"><%= product.title %></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;"><%= product.Category ? product.Category.name : '' %></div>
             <div class="product-price">
               <span class="current-price">$<%= parseFloat(product.price).toFixed(2) %></span>
               <% if (product.previousPrice && parseFloat(product.previousPrice) > 0) { %>

@@ -34,8 +34,8 @@
                 <td>
                   <div class="flex gap-10">
                     <a href="/admin/products/edit/<%= p.id %>" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="/admin/products/delete/<%= p.id %>" onsubmit="return confirm('Delete this product?')">
-                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    <form method="POST" action="/admin/products/delete/<%= p.id %>">
+                      <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this product?"><i class="fas fa-trash"></i></button>
                     </form>
                   </div>
                 </td>

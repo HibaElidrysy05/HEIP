@@ -37,11 +37,13 @@ router.get('/category/:slug', async (req, res) => {
 router.get('/search', async (req, res) => {
   try {
     const q = req.query.q || '';
-    const products = await Product.findAll({
-      where: { title: { [Op.like]: '%' + q + '%' }, isActive: true }
-    });
+    const cat = req.query.cat || '';
+    const where = { title: { [Op.like]: '%' + q + '%' }, isActive: true };
+    if (cat) where.categoryId = parseInt(cat);
+    const products = await Product.findAll({ where, include: [{ model: Category }] });
     const categories = await Category.findAll({ where: { isActive: true }, order: [['order', 'ASC']] });
-    res.render('search', { title: 'Search: ' + q + ' - HEIP', products, query: q, categories });
+    const selectedCat = cat;
+    res.render('search', { title: 'Search: ' + q + ' - HEIP', products, query: q, categories, selectedCat });
   } catch (err) {
     res.redirect('/');
   }

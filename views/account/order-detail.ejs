@@ -65,7 +65,7 @@
     <% } %>
   </div>
 
-  <div class="flex gap-20">
+  <div class="flex gap-20" style="flex-wrap:wrap;">
     <% if (order.status === 'completed') { %>
       <a href="/account/orders/<%= order.id %>/receipt" class="btn btn-primary">
         <i class="fas fa-receipt"></i> Download Receipt
@@ -74,6 +74,13 @@
     <a href="/support/new" class="btn btn-outline">
       <i class="fas fa-headset"></i> Need Help?
     </a>
+    <% if (order.status === 'pending') { %>
+      <form method="POST" action="/account/orders/<%= order.id %>/cancel">
+        <button type="submit" class="btn btn-danger" data-confirm="Cancel this order?">
+          <i class="fas fa-times"></i> Cancel Order
+        </button>
+      </form>
+    <% } %>
   </div>
 </div>
 

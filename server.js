@@ -4,7 +4,7 @@ const flash = require('connect-flash');
 const path = require('path');
 const fs = require('fs');
 const sequelize = require('./config/database');
-const { User, Category, Banner, Product, Setting } = require('./models');
+const { User, Category, Banner, Product, Setting, Notification } = require('./models');
 const bcrypt = require('bcryptjs');
 
 const app = express();
@@ -51,6 +51,27 @@ app.use(async (req, res, next) => {
     res.locals.categories = [];
     res.locals.banners = [];
     res.locals.featuredProducts = [];
+  }
+  next();
+});
+
+// Load user/notifications for navbar
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.userId) {
+      const where = req.session.userRole === 'admin'
+        ? { forAdmin: true }
+        : { userId: req.session.userId, forAdmin: false };
+      const notifications = await Notification.findAll({ where, order: [['createdAt', 'DESC']], limit: 5 });
+      res.locals.userNotifications = notifications;
+      res.locals.unreadNotifCount = await Notification.count({ where: { ...where, isRead: false } });
+    } else {
+      res.locals.userNotifications = [];
+      res.locals.unreadNotifCount = 0;
+    }
+  } catch (e) {
+    res.locals.userNotifications = [];
+    res.locals.unreadNotifCount = 0;
   }
   next();
 });

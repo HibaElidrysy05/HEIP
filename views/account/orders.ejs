@@ -18,13 +18,20 @@
           <span><i class="fas fa-dollar-sign"></i> $<%= parseFloat(order.total).toFixed(2) %></span>
           <span><i class="fas fa-credit-card"></i> <%= order.paymentMethod %></span>
         </div>
-        <% if (order.status === 'completed') { %>
-          <div class="order-actions">
+        <div class="order-actions">
+          <% if (order.status === 'completed') { %>
             <span class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt'">
               <i class="fas fa-receipt"></i> Receipt
             </span>
-          </div>
-        <% } %>
+          <% } %>
+          <% if (order.status === 'pending') { %>
+            <form method="POST" action="/account/orders/<%= order.id %>/cancel" onclick="event.stopPropagation();">
+              <button type="submit" class="btn btn-danger btn-sm" data-confirm="Cancel this order?">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </form>
+          <% } %>
+        </div>
       </a>
     <% }); %>
   <% } else { %>

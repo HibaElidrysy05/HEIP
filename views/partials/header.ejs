@@ -46,6 +46,36 @@
             <span class="cart-badge" id="cartBadge"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
           </a>
           <% if (user) { %>
+            <div class="nav-dropdown" id="notifDropdownWrap">
+              <a href="#" class="nav-icon notif-bell" id="notifBell">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notifBadge"><%= unreadNotifCount || 0 %></span>
+              </a>
+              <div class="dropdown-menu notif-dropdown-menu" id="notifDropdown">
+                <div class="notif-dd-header">
+                  <span>Notifications</span>
+                  <% if (unreadNotifCount > 0) { %>
+                    <a href="#" id="markAllNotifRead" class="notif-dd-mark-read">Mark all read</a>
+                  <% } %>
+                </div>
+                <div class="notif-dd-list">
+                  <% if (userNotifications.length > 0) { %>
+                    <% userNotifications.forEach(function(n) { %>
+                      <a href="<%= n.link || '#' %>" class="notif-dd-item <%= !n.isRead ? 'unread' : '' %>" data-id="<%= n.id %>">
+                        <div class="notif-dd-title"><%= n.title %></div>
+                        <div class="notif-dd-msg"><%= n.message %></div>
+                        <div class="notif-dd-time"><%= new Date(n.createdAt).toLocaleDateString() %></div>
+                      </a>
+                    <% }); %>
+                  <% } else { %>
+                    <div class="notif-dd-empty">No notifications</div>
+                  <% } %>
+                </div>
+                <% if (user.role === 'admin') { %>
+                  <a href="/admin/notifications" class="notif-dd-footer">View all notifications</a>
+                <% } %>
+              </div>
+            </div>
             <div class="nav-dropdown">
               <a href="#" class="nav-icon"><i class="fas fa-user"></i> <i class="fas fa-chevron-down"></i></a>
               <ul class="dropdown-menu dropdown-menu-right">
