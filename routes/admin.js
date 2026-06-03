@@ -8,6 +8,31 @@ const { Op } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
 
+// Notification AJAX routes (must be before isAdmin for regular user access)
+router.post('/notifications/mark-read/:id', async (req, res) => {
+  try {
+    const where = { id: req.params.id };
+    if (req.session.userRole !== 'admin') {
+      where.userId = req.session.userId;
+      where.forAdmin = false;
+    }
+    await Notification.update({ isRead: true }, { where });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post('/notifications/mark-all-read', async (req, res) => {
+  try {
+    const where = req.session.userRole === 'admin' ? { forAdmin: true } : { userId: req.session.userId, forAdmin: false };
+    await Notification.update({ isRead: true }, { where });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
 router.use(isAdmin);
 
 router.get('/', async (req, res) => {
@@ -172,30 +197,7 @@ router.post('/orders/update-status/:id', async (req, res) => {
   res.redirect('/admin/orders/' + req.params.id);
 });
 
-// Users (admin notification AJAX endpoint)
-router.post('/notifications/mark-read/:id', async (req, res) => {
-  try {
-    const where = { id: req.params.id };
-    if (req.session.userRole !== 'admin') {
-      where.userId = req.session.userId;
-      where.forAdmin = false;
-    }
-    await Notification.update({ isRead: true }, { where });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ success: false });
-  }
-});
 
-router.post('/notifications/mark-all-read', async (req, res) => {
-  try {
-    const where = req.session.userRole === 'admin' ? { forAdmin: true } : { userId: req.session.userId, forAdmin: false };
-    await Notification.update({ isRead: true }, { where });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ success: false });
-  }
-});
 
 router.get('/users', async (req, res) => {
   const users = await User.findAll({ order: [['createdAt', 'DESC']] });
@@ -270,11 +272,20 @@ router.post('/banners/save', uploadBannerImage.single('image'), async (req, res)
 });
 
 router.post('/banners/delete/:id', async (req, res) => {
-  const banner = await Banner.findByPk(req.params.id);
-  if (banner && banner.image && fs.existsSync(path.join(__dirname, '..', 'public', banner.image))) {
-    fs.unlinkSync(path.join(__dirname, '..', 'public', banner.image));
+  try {
+    const banner = await Banner.findByPk(req.params.id);
+    if (!banner) {
+      req.flash('error', 'Banner not found');
+      return res.redirect('/admin/banners');
+    }
+    if (banner.image && fs.existsSync(path.join(__dirname, '..', 'public', banner.image))) {
+      fs.unlinkSync(path.join(__dirname, '..', 'public', banner.image));
+    }
+    await Banner.destroy({ where: { id: req.params.id } });
+    req.flash('success', 'Banner deleted');
+  } catch (err) {
+    req.flash('error', 'Failed to delete banner');
   }
-  await Banner.destroy({ where: { id: req.params.id } });
   res.redirect('/admin/banners');
 });
 

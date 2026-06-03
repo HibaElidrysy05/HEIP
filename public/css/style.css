@@ -242,6 +242,10 @@ img { max-width: 100%; height: auto; }
 
 .dropdown-divider { height: 1px; background: var(--border-color); margin: 4px 6px; }
 
+/* Notification bell dropdown — click only, no hover */
+#notifDropdownWrap:hover .dropdown-menu { display: none; opacity: 0; }
+#notifDropdownWrap.active .dropdown-menu { display: flex; opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* ===== MAIN CONTENT ===== */
 .main-content { flex: 1; padding: 48px 0; }
 
