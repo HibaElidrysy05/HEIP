@@ -67,8 +67,11 @@
 
   <div class="flex gap-20" style="flex-wrap:wrap;">
     <% if (order.status === 'completed') { %>
-      <a href="/account/orders/<%= order.id %>/receipt" class="btn btn-primary">
-        <i class="fas fa-receipt"></i> Download Receipt
+      <a href="/account/orders/<%= order.id %>/receipt" class="btn btn-outline">
+        <i class="fas fa-receipt"></i> View Receipt
+      </a>
+      <a href="/account/orders/<%= order.id %>/receipt/pdf" class="btn btn-primary">
+        <i class="fas fa-file-pdf"></i> Download PDF
       </a>
     <% } %>
     <a href="/support/new" class="btn btn-outline">

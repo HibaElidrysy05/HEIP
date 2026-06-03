@@ -20,8 +20,11 @@
         </div>
         <div class="order-actions">
           <% if (order.status === 'completed') { %>
-            <span class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt'">
+            <span class="btn btn-outline btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt'">
               <i class="fas fa-receipt"></i> Receipt
+            </span>
+            <span class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt/pdf'">
+              <i class="fas fa-file-pdf"></i> PDF
             </span>
           <% } %>
           <% if (order.status === 'pending') { %>

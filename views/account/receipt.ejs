@@ -2,61 +2,155 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Receipt - <%= order.orderNumber %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Courier New', monospace; background: #fff; color: #000; padding: 40px; }
-    @media (max-width: 600px) { body { padding: 16px; } .receipt { padding: 20px; } }
-    .receipt { max-width: 600px; margin: 0 auto; border: 2px solid #000; padding: 40px; }
-    h1 { text-align: center; font-size: 28px; letter-spacing: 4px; margin-bottom: 5px; }
-    .subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 30px; }
-    .divider { border-top: 1px dashed #000; margin: 15px 0; }
-    .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
-    .header-row { font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 8px; margin-bottom: 8px; }
-    .total-row { font-weight: bold; font-size: 18px; padding-top: 10px; border-top: 2px solid #000; margin-top: 10px; }
-    .info { font-size: 12px; color: #666; margin-bottom: 5px; }
-    .footer { text-align: center; margin-top: 30px; font-size: 11px; color: #666; }
-    .status { text-align: center; margin: 15px 0; font-weight: bold; text-transform: uppercase; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 40px;
+      -webkit-font-smoothing: antialiased;
+    }
+    @media (max-width: 600px) { body { padding: 16px; } }
+    .receipt { max-width: 640px; margin: 0 auto; padding: 48px; }
+    .header { margin-bottom: 32px; }
+    .header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .header p { font-size: 13px; color: #666; font-weight: 400; }
+    .meta { display: flex; flex-wrap: wrap; gap: 32px; margin-bottom: 28px; padding-bottom: 28px; border-bottom: 2px solid #000; }
+    .meta-col { }
+    .meta-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+    .meta-value { font-size: 14px; font-weight: 500; color: #000; }
+    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
+    .status-completed { background: rgba(68, 255, 136, 0.12); color: #0a8; border: 1px solid rgba(68, 255, 136, 0.25); }
+    .status-pending { background: rgba(255, 170, 68, 0.12); color: #c80; border: 1px solid rgba(255, 170, 68, 0.25); }
+    .status-cancelled { background: rgba(255, 68, 68, 0.12); color: #c00; border: 1px solid rgba(255, 68, 68, 0.25); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    th { text-align: left; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+    td { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
+    .item-qty, .item-price { text-align: right; }
+    .total-row td { padding-top: 16px; border-top: 2px solid #000; font-weight: 700; font-size: 18px; color: #000; border-bottom: none; }
+    .total-row .item-price { font-weight: 700; }
+    .footer-text { text-align: center; margin-top: 32px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #888; line-height: 1.8; }
+    .actions { text-align: center; margin-top: 24px; display: flex; gap: 12px; justify-content: center; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; border: none; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
+    .btn-primary { background: #000; color: #fff; }
+    .btn-primary:hover { background: #333; }
+    .btn-outline { background: transparent; border: 1px solid #ccc; color: #333; }
+    .btn-outline:hover { border-color: #000; color: #000; }
+    @media print {
+      .actions { display: none; }
+      body { padding: 0; }
+      .receipt { padding: 0; }
+    }
   </style>
 </head>
 <body>
   <div class="receipt">
-    <h1>HEIP</h1>
-    <div class="subtitle">DIGITAL PRODUCTS RECEIPT</div>
-    <div class="divider"></div>
-    <div class="info">Receipt #: <%= order.receiptNumber %></div>
-    <div class="info">Order #: <%= order.orderNumber %></div>
-    <div class="info">Date: <%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
-    <div class="info">Customer: <%= order.customerName %></div>
-    <div class="info">Email: <%= order.customerEmail %></div>
-    <div class="info">Payment: <%= order.paymentMethod %></div>
-    <div class="status"><%= order.status.toUpperCase() %></div>
-    <div class="divider"></div>
-    <div class="row header-row">
-      <span style="flex:2;">Item</span>
-      <span style="flex:1;text-align:center;">Qty</span>
-      <span style="flex:1;text-align:right;">Price</span>
+    <div class="header">
+      <h1>HEIP</h1>
+      <p>Digital Products Receipt</p>
     </div>
-    <% order.OrderItems.forEach(function(item) { %>
-      <div class="row">
-        <span style="flex:2;"><%= item.productTitle %></span>
-        <span style="flex:1;text-align:center;"><%= item.quantity %></span>
-        <span style="flex:1;text-align:right;">$<%= (parseFloat(item.price) * item.quantity).toFixed(2) %></span>
+
+    <span class="status-badge status-<%= order.status %>"><%= order.status.toUpperCase() %></span>
+
+    <div class="meta">
+      <div class="meta-col">
+        <div class="meta-label">Receipt</div>
+        <div class="meta-value"><%= order.receiptNumber %></div>
       </div>
-    <% }); %>
-    <div class="divider"></div>
-    <div class="row total-row">
-      <span>Total</span>
-      <span>$<%= parseFloat(order.total).toFixed(2) %></span>
+      <div class="meta-col">
+        <div class="meta-label">Order</div>
+        <div class="meta-value"><%= order.orderNumber %></div>
+      </div>
+      <div class="meta-col">
+        <div class="meta-label">Date</div>
+        <div class="meta-value"><%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+      </div>
+      <div class="meta-col">
+        <div class="meta-label">Payment</div>
+        <div class="meta-value"><%= order.paymentMethod %></div>
+      </div>
     </div>
-    <div class="footer">
+
+    <div class="meta" style="border-bottom:1px solid #ddd;padding-bottom:20px;">
+      <div class="meta-col">
+        <div class="meta-label">Customer</div>
+        <div class="meta-value"><%= order.customerName %></div>
+      </div>
+      <div class="meta-col">
+        <div class="meta-label">Email</div>
+        <div class="meta-value"><%= order.customerEmail %></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="item-qty">Qty</th>
+          <th class="item-price">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.OrderItems.forEach(function(item) { %>
+          <tr>
+            <td><%= item.productTitle %></td>
+            <td class="item-qty"><%= item.quantity %></td>
+            <td class="item-price">$<%= (parseFloat(item.price) * item.quantity).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+        <tr class="total-row">
+          <td colspan="2">Total</td>
+          <td class="item-price">$<%= parseFloat(order.total).toFixed(2) %></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer-text">
       <p>Thank you for your purchase!</p>
       <p>HEIP Digital Marketplace</p>
-      <p style="margin-top:10px;">This is a computer-generated receipt.</p>
+      <p style="margin-top:8px;font-size:11px;color:#aaa;">This is a computer-generated receipt.</p>
+    </div>
+
+    <div class="actions">
+      <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print</button>
+      <button onclick="downloadPDF()" class="btn btn-outline"><i class="fas fa-file-pdf"></i> Download PDF</button>
     </div>
   </div>
-  <div style="text-align:center;margin-top:20px;">
-    <button onclick="window.print()" style="padding:10px 30px;background:#000;color:#fff;border:none;cursor:pointer;font-size:14px;">Print Receipt</button>
-  </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    function downloadPDF() {
+      var btn = event.target.closest('button');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+      html2canvas(document.querySelector('.receipt'), {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false
+      }).then(function(canvas) {
+        var imgData = canvas.toDataURL('image/png');
+        var { jsPDF } = window.jspdf;
+        var pdf = new jsPDF('p', 'mm', 'a4');
+        var pdfWidth = pdf.internal.pageSize.getWidth();
+        var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('receipt-<%= order.orderNumber %>.pdf');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+      }).catch(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+        alert('Failed to generate PDF. Please use Print > Save as PDF instead.');
+      });
+    }
+  </script>
 </body>
 </html>
