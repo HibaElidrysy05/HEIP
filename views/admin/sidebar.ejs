@@ -1,5 +1,9 @@
 <div class="admin-sidebar" id="adminSidebar">
-  <div class="admin-sidebar-title">Admin Panel</div>
+  <div class="admin-sidebar-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px;">
+    Admin Panel
+    <button onclick="document.getElementById('adminSidebar').classList.remove('active');document.querySelector('.admin-sidebar-overlay')&&(document.querySelector('.admin-sidebar-overlay').style.opacity='0',document.querySelector('.admin-sidebar-overlay').style.pointerEvents='none')" style="background:none;border:none;color:var(--text-secondary);font-size:18px;cursor:pointer;display:none;" class="sidebar-close-btn"><i class="fas fa-times"></i></button>
+  </div>
+  <style>@media(max-width:768px){.sidebar-close-btn{display:block!important}}</style>
   <a href="/admin" class="admin-nav-item <%= path === '/admin' ? 'active' : '' %>">
     <i class="fas fa-chart-bar"></i> Dashboard
   </a>
