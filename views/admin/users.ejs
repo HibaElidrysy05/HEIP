@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Users</h1>
+      <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Username</th><th>Email</th><th>Name</th><th>Role</th><th>Active</th><th>Joined</th><th></th></tr>
+        </thead>
+        <tbody>
+          <% if (users.length > 0) { %>
+            <% users.forEach(function(u) { %>
+              <tr>
+                <td><%= u.id %></td>
+                <td><strong><%= u.username %></strong></td>
+                <td><%= u.email %></td>
+                <td><%= u.fullName || '-' %></td>
+                <td><span class="badge <%= u.role === 'admin' ? 'badge-admin' : 'badge-user' %>"><%= u.role %></span></td>
+                <td><%= u.isActive ? 'Yes' : 'No' %></td>
+                <td style="font-size:12px;"><%= new Date(u.createdAt).toLocaleDateString() %></td>
+                <td>
+                  <a href="/admin/users/edit/<%= u.id %>" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+                  <% if (u.role !== 'admin') { %>
+                    <form method="POST" action="/admin/users/delete/<%= u.id %>" onsubmit="return confirm('Delete this user?')" style="display:inline;">
+                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr><td colspan="8" style="text-align:center;color:var(--text-muted);">No users found.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

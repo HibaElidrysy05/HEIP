@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <div class="product-page">
+    <div class="product-gallery">
+      <% if (product.image) { %>
+        <img src="<%= product.image %>" alt="<%= product.title %>">
+      <% } else { %>
+        <div style="width:100%;height:400px;display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);border-radius:var(--radius);border:1px solid var(--border-color);font-size:80px;color:var(--text-muted);">
+          <i class="fas fa-file"></i>
+        </div>
+      <% } %>
+    </div>
+    <div class="product-info">
+      <h1 class="product-info-title"><%= product.title %></h1>
+      <div class="product-info-price">
+        <span class="current-price">$<%= parseFloat(product.price).toFixed(2) %></span>
+        <% if (product.previousPrice && parseFloat(product.previousPrice) > 0) { %>
+          <span class="previous-price">$<%= parseFloat(product.previousPrice).toFixed(2) %></span>
+        <% } %>
+      </div>
+
+      <div class="product-description"><%= product.description %></div>
+
+      <% if (product.filePath) { %>
+        <div class="file-info">
+          <span><i class="fas fa-file"></i> <%= product.fileType || 'File' %></span>
+          <% if (product.fileSize) { %><span><i class="fas fa-weight"></i> <%= product.fileSize %></span><% } %>
+        </div>
+      <% } %>
+
+      <form class="add-to-cart-form" method="POST">
+        <input type="hidden" name="productId" value="<%= product.id %>">
+
+        <% if (typeof productOptions !== 'undefined' && productOptions.length > 0) { %>
+          <div class="product-options">
+            <% productOptions.forEach(function(opt, idx) { %>
+              <div class="option-group">
+                <label><%= opt.name || 'Option ' + (idx + 1) %></label>
+                <% if (opt.type === 'select' && opt.values) { %>
+                  <select name="options[<%= idx %>]" class="form-select">
+                    <% opt.values.forEach(function(val) { %>
+                      <option value="<%= val %>"><%= val %></option>
+                    <% }); %>
+                  </select>
+                <% } else { %>
+                  <input type="text" name="options[<%= idx %>]" class="form-input" placeholder="<%= opt.name || 'Option ' + (idx + 1) %>">
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <div class="form-row mb-20">
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="quantity" value="1" min="1" class="form-input">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <% if (typeof related !== 'undefined' && related.length > 0) { %>
+    <div class="section-title" style="text-align:left;">Related Products</div>
+    <div class="grid">
+      <% related.forEach(function(rp) { %>
+        <a href="/products/<%= rp.slug %>" class="card product-card">
+          <% if (rp.image) { %>
+            <img src="<%= rp.image %>" alt="<%= rp.title %>" class="card-img">
+          <% } else { %>
+            <div class="card-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);font-size:36px;color:var(--text-muted);">
+              <i class="fas fa-file"></i>
+            </div>
+          <% } %>
+          <div class="card-body">
+            <div class="card-title"><%= rp.title %></div>
+            <div class="product-price">
+              <span class="current-price">$<%= parseFloat(rp.price).toFixed(2) %></span>
+              <% if (rp.previousPrice && parseFloat(rp.previousPrice) > 0) { %>
+                <span class="previous-price">$<%= parseFloat(rp.previousPrice).toFixed(2) %></span>
+              <% } %>
+            </div>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

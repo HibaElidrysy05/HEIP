@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <div class="section-title">Search Results</div>
+  <div class="section-subtitle">Showing results for: "<%= query %>"</div>
+
+  <div class="grid">
+    <% if (products.length > 0) { %>
+      <% products.forEach(function(product) { %>
+        <a href="/products/<%= product.slug %>" class="card product-card">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.title %>" class="card-img">
+          <% } else { %>
+            <div class="card-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);font-size:48px;color:var(--text-muted);">
+              <i class="fas fa-file"></i>
+            </div>
+          <% } %>
+          <div class="card-body">
+            <div class="card-title"><%= product.title %></div>
+            <div class="product-price">
+              <span class="current-price">$<%= parseFloat(product.price).toFixed(2) %></span>
+              <% if (product.previousPrice && parseFloat(product.previousPrice) > 0) { %>
+                <span class="previous-price">$<%= parseFloat(product.previousPrice).toFixed(2) %></span>
+              <% } %>
+            </div>
+          </div>
+        </a>
+      <% }); %>
+    <% } else { %>
+      <div class="empty-state" style="grid-column:1/-1;">
+        <i class="fas fa-search"></i>
+        <h3>No Results Found</h3>
+        <p>Try searching with different keywords.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

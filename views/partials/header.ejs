@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'HEIP' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo">
+        <% if (siteSettings && siteSettings.logo) { %>
+          <img src="<%= siteSettings.logo %>" alt="HEIP" class="logo-img">
+        <% } else { %>
+          <span class="logo-text">HEIP</span>
+        <% } %>
+      </a>
+      <button class="nav-toggle" id="navToggle"><i class="fas fa-bars"></i></button>
+      <div class="nav-menu" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+            <li class="nav-dropdown">
+              <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <% categories.forEach(function(cat) { %>
+                  <li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li>
+                <% }); %>
+              </ul>
+            </li>
+          <% } %>
+          <li><a href="/support">Support</a></li>
+        </ul>
+        <div class="nav-actions">
+          <form action="/search" method="GET" class="search-form">
+            <input type="text" name="q" placeholder="Search..." class="search-input">
+            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+          </form>
+          <a href="/cart" class="nav-icon cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
+          </a>
+          <% if (user) { %>
+            <div class="nav-dropdown">
+              <a href="#" class="nav-icon"><i class="fas fa-user"></i> <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="/account"><i class="fas fa-id-card"></i> My Account</a></li>
+                <li><a href="/account/orders"><i class="fas fa-box"></i> My Orders</a></li>
+                <li><a href="/support"><i class="fas fa-headset"></i> Support</a></li>
+                <% if (user.role === 'admin') { %>
+                  <li class="dropdown-divider"></li>
+                  <li><a href="/admin"><i class="fas fa-shield-alt"></i> Admin Panel</a></li>
+                <% } %>
+                <li class="dropdown-divider"></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
+            </div>
+          <% } else { %>
+            <a href="/login" class="btn btn-outline btn-sm">Login</a>
+            <a href="/register" class="btn btn-primary btn-sm">Sign Up</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <!-- Flash Messages -->
+    <% if (typeof success !== 'undefined' && success.length > 0) { %>
+      <div class="flash flash-success"><i class="fas fa-check-circle"></i> <%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error.length > 0) { %>
+      <div class="flash flash-error"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>

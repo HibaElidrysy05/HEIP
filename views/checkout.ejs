@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <div class="section-title">Checkout</div>
+
+  <div class="checkout-grid">
+    <div>
+      <form method="POST" action="/checkout/place">
+        <div class="card" style="padding:30px;margin-bottom:20px;">
+          <h3 style="margin-bottom:20px;font-weight:700;">Customer Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" name="customerName" class="form-input" value="<%= user.fullName || user.username %>" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" name="customerEmail" class="form-input" value="<%= user.email %>" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:30px;margin-bottom:20px;">
+          <h3 style="margin-bottom:20px;font-weight:700;">Payment Method</h3>
+          <div class="form-group">
+            <select name="paymentMethod" class="form-select">
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Crypto">Cryptocurrency</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="padding:30px;margin-bottom:20px;">
+          <h3 style="margin-bottom:20px;font-weight:700;">Order Notes (Optional)</h3>
+          <div class="form-group">
+            <textarea name="notes" class="form-textarea" placeholder="Any special instructions..."></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          <i class="fas fa-check"></i> Place Order - $<%= subtotal.toFixed(2) %>
+        </button>
+      </form>
+    </div>
+
+    <div>
+      <div class="card" style="padding:25px;">
+        <h3 style="margin-bottom:20px;font-weight:700;">Order Summary</h3>
+        <% items.forEach(function(item) { %>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);font-size:13px;">
+            <span><%= item.product.title %> x<%= item.quantity %></span>
+            <span>$<%= item.total.toFixed(2) %></span>
+          </div>
+        <% }); %>
+        <div style="display:flex;justify-content:space-between;padding:15px 0 0;font-size:20px;font-weight:800;">
+          <span>Total</span>
+          <span>$<%= subtotal.toFixed(2) %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

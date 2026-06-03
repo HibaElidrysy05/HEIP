@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <div class="flex-between mb-30">
+    <h1 class="section-title" style="margin:0;">Support Tickets</h1>
+    <a href="/support/new" class="btn btn-primary"><i class="fas fa-plus"></i> New Ticket</a>
+  </div>
+
+  <% if (tickets.length > 0) { %>
+    <% tickets.forEach(function(ticket) { %>
+      <a href="/support/<%= ticket.id %>" class="order-card" style="display:block;">
+        <div class="order-header">
+          <span class="order-number"><%= ticket.subject %></span>
+          <span class="order-status status-<%= ticket.status === 'open' ? 'pending' : (ticket.status === 'replied' ? 'completed' : 'cancelled') %>">
+            <%= ticket.status %>
+          </span>
+        </div>
+        <div class="order-details">
+          <span><i class="fas fa-calendar"></i> <%= new Date(ticket.createdAt).toLocaleDateString() %></span>
+          <span><i class="fas fa-flag"></i> <%= ticket.priority %> priority</span>
+          <% if (ticket.adminReply) { %>
+            <span><i class="fas fa-reply"></i> Replied</span>
+          <% } %>
+        </div>
+        <div style="margin-top:10px;color:var(--text-secondary);font-size:13px;">
+          <%= ticket.message.substring(0, 150) %><%= ticket.message.length > 150 ? '...' : '' %>
+        </div>
+      </a>
+    <% }); %>
+  <% } else { %>
+    <div class="empty-state">
+      <i class="fas fa-headset"></i>
+      <h3>No Tickets</h3>
+      <p>You haven't submitted any support tickets yet.</p>
+      <a href="/support/new" class="btn btn-primary">Create Ticket</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

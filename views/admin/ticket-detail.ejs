@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Ticket #<%= ticket.id %></h1>
+      <div class="flex gap-10">
+        <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+        <a href="/admin/tickets" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+      </div>
+    </div>
+
+    <div class="card" style="padding:30px;margin-bottom:20px;">
+      <div class="flex-between mb-20">
+        <h3 style="font-weight:700;"><%= ticket.subject %></h3>
+        <div class="flex gap-10">
+          <span class="badge badge-<%= ticket.status %>"><%= ticket.status %></span>
+          <span class="badge badge-<%= ticket.priority %>"><%= ticket.priority %></span>
+        </div>
+      </div>
+
+      <div style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">
+        From <strong><%= ticket.User ? ticket.User.username : 'Unknown' %></strong> (<%= ticket.User ? ticket.User.email : '' %>)
+        on <%= new Date(ticket.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+      </div>
+
+      <div style="padding:20px;background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:20px;white-space:pre-wrap;line-height:1.6;">
+        <%= ticket.message %>
+      </div>
+
+      <% if (ticket.adminReply) { %>
+        <div style="border-left:3px solid var(--text-primary);padding:20px;background:var(--bg-hover);border-radius:var(--radius);margin-bottom:20px;">
+          <p style="font-weight:600;margin-bottom:10px;"><i class="fas fa-reply"></i> Your Reply</p>
+          <p style="white-space:pre-wrap;line-height:1.6;color:var(--text-secondary);"><%= ticket.adminReply %></p>
+          <% if (ticket.repliedAt) { %>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:10px;"><%= new Date(ticket.repliedAt).toLocaleDateString() %></p>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="card" style="padding:30px;">
+      <h3 style="margin-bottom:20px;font-weight:700;">Reply to Ticket</h3>
+      <form method="POST" action="/admin/tickets/reply/<%= ticket.id %>">
+        <div class="form-group">
+          <textarea name="adminReply" class="form-textarea" style="min-height:150px;" placeholder="Write your response..." <%= ticket.status === 'closed' ? 'disabled' : '' %>><%= ticket.adminReply || '' %></textarea>
+        </div>
+        <div class="flex gap-10">
+          <button type="submit" class="btn btn-primary" <%= ticket.status === 'closed' ? 'disabled' : '' %>>
+            <i class="fas fa-reply"></i> Send Reply
+          </button>
+          <% if (ticket.status !== 'closed') { %>
+            <form method="POST" action="/admin/tickets/close/<%= ticket.id %>" style="display:inline;">
+              <button type="submit" class="btn btn-outline"><i class="fas fa-times"></i> Close Ticket</button>
+            </form>
+          <% } %>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

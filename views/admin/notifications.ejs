@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Notifications</h1>
+      <div class="flex gap-10">
+        <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+        <form method="POST" action="/admin/notifications/read-all">
+          <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-check-double"></i> Mark All Read</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;">
+      <% if (notifications.length > 0) { %>
+        <% notifications.forEach(function(n) { %>
+          <div class="notif-item <%= !n.isRead ? 'unread' : '' %>">
+            <div class="notif-content" style="flex:1;">
+              <div class="notif-title"><%= n.title %></div>
+              <div class="notif-message"><%= n.message %></div>
+              <div class="notif-time"><%= new Date(n.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></div>
+            </div>
+            <div class="flex gap-10">
+              <% if (n.link) { %><a href="<%= n.link %>" class="btn btn-outline btn-sm">View</a><% } %>
+              <form method="POST" action="/admin/notifications/read/<%= n.id %>">
+                <button type="submit" class="btn btn-outline btn-sm" title="Mark as read"><i class="fas fa-check"></i></button>
+              </form>
+              <form method="POST" action="/admin/notifications/delete/<%= n.id %>">
+                <button type="submit" class="btn btn-danger btn-sm" title="Delete"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-bell"></i>
+          <h3>No Notifications</h3>
+          <p>You're all caught up!</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

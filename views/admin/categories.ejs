@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Categories</h1>
+      <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;">
+      <div class="card" style="padding:25px;">
+        <h3 style="margin-bottom:20px;font-weight:700;">New Category</h3>
+        <form method="POST" action="/admin/categories/save">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" class="form-textarea"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Order</label>
+              <input type="number" name="order" class="form-input" value="0">
+            </div>
+            <div class="form-group">
+              <label class="toggle-label" style="margin-top:25px;">
+                <input type="checkbox" name="isActive" checked> Active
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Category</button>
+        </form>
+      </div>
+
+      <div class="card" style="padding:25px;">
+        <h3 style="margin-bottom:20px;font-weight:700;">Existing Categories</h3>
+        <table>
+          <thead><tr><th>Name</th><th>Products</th><th>Order</th><th>Active</th><th></th></tr></thead>
+          <tbody>
+            <% if (categories.length > 0) { %>
+              <% categories.forEach(function(cat) { %>
+                <tr>
+                  <td><strong><%= cat.name %></strong></td>
+                  <td><%= cat.Products ? cat.Products.length : 0 %></td>
+                  <td><%= cat.order || 0 %></td>
+                  <td><%= cat.isActive ? 'Yes' : 'No' %></td>
+                  <td>
+                    <form method="POST" action="/admin/categories/delete/<%= cat.id %>" onsubmit="return confirm('Delete this category? Products will remain uncategorized.')">
+                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No categories yet.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

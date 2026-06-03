@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <div class="empty-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h3>Something Went Wrong</h3>
+    <p><%= typeof message !== 'undefined' ? message : 'An unexpected error occurred.' %></p>
+    <a href="/" class="btn btn-primary">Go Home</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

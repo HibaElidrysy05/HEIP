@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <div class="auth-page" style="max-width:600px;">
+    <h1 class="auth-title">New Support Ticket</h1>
+    <form method="POST" action="/support/new">
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" name="subject" class="form-input" required placeholder="Brief description of your issue">
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select name="priority" class="form-select">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea name="message" class="form-textarea" required placeholder="Describe your issue in detail..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Ticket</button>
+    </form>
+    <div class="auth-link"><a href="/support">Back to Tickets</a></div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

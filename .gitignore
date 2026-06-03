@@ -1,0 +1,8 @@
+node_modules/
+database.sqlite
+public/uploads/products/*
+public/uploads/banners/*
+!public/uploads/products/.gitkeep
+!public/uploads/banners/.gitkeep
+server.log
+server.err

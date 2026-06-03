@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<!-- Banners -->
+<% if (typeof banners !== 'undefined' && banners.length > 0) { %>
+  <div class="container">
+    <% banners.forEach(function(banner) { %>
+      <div class="hero-banner" style="background: <%= banner.bgColor || '#1a1a1a' %>;">
+        <% if (banner.type === 'image' && banner.image) { %>
+          <img src="<%= banner.image %>" alt="<%= banner.title %>" class="hero-banner-img">
+          <div class="hero-banner-overlay"></div>
+        <% } %>
+        <div class="hero-banner-content" style="color: <%= banner.textColor || '#fff' %>;">
+          <h1 class="hero-banner-title"><%= banner.title %></h1>
+          <p class="hero-banner-text"><%= banner.content %></p>
+          <% if (banner.link) { %>
+            <a href="<%= banner.link %>" class="btn btn-primary btn-lg"><%= banner.linkText || 'Learn More' %></a>
+          <% } %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<div class="container">
+  <div class="section-title">Featured Products</div>
+  <div class="section-subtitle">Premium digital products for creators and professionals</div>
+
+  <div class="grid">
+    <% if (typeof products !== 'undefined' && products.length > 0) { %>
+      <% products.forEach(function(product) { %>
+        <a href="/products/<%= product.slug %>" class="card product-card">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.title %>" class="card-img">
+          <% } else { %>
+            <div class="card-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);font-size:48px;color:var(--text-muted);">
+              <i class="fas fa-file"></i>
+            </div>
+          <% } %>
+          <div class="card-body">
+            <div class="card-title"><%= product.title %></div>
+            <% if (product.shortDescription) { %>
+              <div class="card-text"><%= product.shortDescription %></div>
+            <% } %>
+            <div class="product-price">
+              <span class="current-price">$<%= parseFloat(product.price).toFixed(2) %></span>
+              <% if (product.previousPrice && parseFloat(product.previousPrice) > 0) { %>
+                <span class="previous-price">$<%= parseFloat(product.previousPrice).toFixed(2) %></span>
+              <% } %>
+            </div>
+            <span class="btn btn-primary btn-sm btn-block">Buy Now</span>
+          </div>
+        </a>
+      <% }); %>
+    <% } else { %>
+      <div class="empty-state" style="grid-column:1/-1;">
+        <i class="fas fa-box-open"></i>
+        <h3>No Products Yet</h3>
+        <p>Products will appear here once added by the admin.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

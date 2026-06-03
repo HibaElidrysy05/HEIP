@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Support Tickets</h1>
+      <div class="flex gap-10">
+        <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+        <div class="tabs" style="margin:0;">
+          <a href="/admin/tickets" class="tab <%= !status ? 'active' : '' %>">All</a>
+          <a href="/admin/tickets?status=open" class="tab <%= status === 'open' ? 'active' : '' %>">Open</a>
+          <a href="/admin/tickets?status=replied" class="tab <%= status === 'replied' ? 'active' : '' %>">Replied</a>
+          <a href="/admin/tickets?status=closed" class="tab <%= status === 'closed' ? 'active' : '' %>">Closed</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Subject</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          <% if (tickets.length > 0) { %>
+            <% tickets.forEach(function(t) { %>
+              <tr>
+                <td>#<%= t.id %></td>
+                <td><%= t.User ? t.User.username : 'Unknown' %></td>
+                <td><strong><%= t.subject %></strong></td>
+                <td><span class="badge badge-<%= t.priority %>"><%= t.priority %></span></td>
+                <td><span class="badge badge-<%= t.status %>"><%= t.status %></span></td>
+                <td style="font-size:12px;"><%= new Date(t.createdAt).toLocaleDateString() %></td>
+                <td><a href="/admin/tickets/<%= t.id %>" class="btn btn-outline btn-sm">View</a></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No tickets found.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

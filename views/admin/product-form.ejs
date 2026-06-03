@@ -1,0 +1,105 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title"><%= product ? 'Edit' : 'New' %> Product</h1>
+      <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+
+    <div class="card" style="padding:30px;">
+      <form method="POST" action="/admin/products/save" enctype="multipart/form-data">
+        <% if (product) { %><input type="hidden" name="id" value="<%= product.id %>"><% } %>
+
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" name="title" class="form-input" value="<%= product ? product.title : '' %>" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price ($)</label>
+            <input type="number" step="0.01" name="price" class="form-input" value="<%= product ? product.price : '' %>" required>
+          </div>
+          <div class="form-group">
+            <label>Previous Price ($)</label>
+            <input type="number" step="0.01" name="previousPrice" class="form-input" value="<%= product ? product.previousPrice : '' %>">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select name="categoryId" class="form-select">
+              <option value="">No Category</option>
+              <% categories.forEach(function(cat) { %>
+                <option value="<%= cat.id %>" <%= product && product.categoryId == cat.id ? 'selected' : '' %>><%= cat.name %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Download Limit</label>
+            <input type="number" name="downloadLimit" class="form-input" value="<%= product ? product.downloadLimit : 0 %>">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <input type="text" name="shortDescription" class="form-input" value="<%= product ? product.shortDescription : '' %>">
+        </div>
+
+        <div class="form-group">
+          <label>Full Description</label>
+          <textarea name="description" class="form-textarea" style="min-height:200px;"><%= product ? product.description : '' %></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Product Image</label>
+            <input type="file" name="image" class="form-input" accept="image/*">
+            <% if (product && product.image) { %>
+              <input type="hidden" name="existing_image" value="<%= product.image %>">
+              <div style="margin-top:10px;"><img src="<%= product.image %>" style="max-width:150px;border-radius:4px;"></div>
+            <% } %>
+          </div>
+          <div class="form-group">
+            <label>Digital File (PDF, ZIP, etc.)</label>
+            <input type="file" name="digitalFile" class="form-input">
+            <% if (product && product.filePath) { %>
+              <div style="margin-top:10px;color:var(--text-secondary);font-size:13px;">
+                Current: <%- product.filePath %> (<%= product.fileSize || 'N/A' %>)
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Options (JSON format - for product variants)</label>
+          <textarea name="options" class="form-textarea" style="min-height:100px;font-family:monospace;font-size:13px;"><%= product ? product.options : '[{"name":"Color","type":"select","values":["Black","White"]}]' %></textarea>
+          <div style="color:var(--text-muted);font-size:12px;margin-top:5px;">
+            Format: [{"name":"Option Name","type":"select","values":["val1","val2"]}]
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="toggle-label">
+              <input type="checkbox" name="featured" <%= product && product.featured ? 'checked' : '' %>> Featured Product
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="toggle-label">
+              <input type="checkbox" name="isActive" <%= !product || product.isActive ? 'checked' : '' %>> Active
+            </label>
+          </div>
+        </div>
+
+        <div class="flex gap-10 mt-20">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Product</button>
+          <a href="/admin/products" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

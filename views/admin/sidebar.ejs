@@ -1,0 +1,33 @@
+<div class="admin-sidebar" id="adminSidebar">
+  <div class="admin-sidebar-title">Admin Panel</div>
+  <a href="/admin" class="admin-nav-item <%= path === '/admin' ? 'active' : '' %>">
+    <i class="fas fa-chart-bar"></i> Dashboard
+  </a>
+  <a href="/admin/products" class="admin-nav-item <%= path.startsWith('/admin/products') ? 'active' : '' %>">
+    <i class="fas fa-box"></i> Products
+  </a>
+  <a href="/admin/categories" class="admin-nav-item <%= path.startsWith('/admin/categories') ? 'active' : '' %>">
+    <i class="fas fa-tags"></i> Categories
+  </a>
+  <a href="/admin/orders" class="admin-nav-item <%= path.startsWith('/admin/orders') ? 'active' : '' %>">
+    <i class="fas fa-shopping-cart"></i> Orders
+  </a>
+  <a href="/admin/users" class="admin-nav-item <%= path.startsWith('/admin/users') ? 'active' : '' %>">
+    <i class="fas fa-users"></i> Users
+  </a>
+  <a href="/admin/banners" class="admin-nav-item <%= path.startsWith('/admin/banners') ? 'active' : '' %>">
+    <i class="fas fa-images"></i> Banners
+  </a>
+  <a href="/admin/tickets" class="admin-nav-item <%= path.startsWith('/admin/tickets') ? 'active' : '' %>">
+    <i class="fas fa-headset"></i> Support Tickets
+  </a>
+  <a href="/admin/notifications" class="admin-nav-item <%= path.startsWith('/admin/notifications') ? 'active' : '' %>">
+    <i class="fas fa-bell"></i> Notifications
+  </a>
+  <a href="/admin/settings" class="admin-nav-item <%= path.startsWith('/admin/settings') ? 'active' : '' %>">
+    <i class="fas fa-cog"></i> Settings
+  </a>
+  <div style="border-top:1px solid var(--border-color);margin-top:20px;padding-top:10px;">
+    <a href="/" class="admin-nav-item"><i class="fas fa-arrow-left"></i> Back to Site</a>
+  </div>
+</div>

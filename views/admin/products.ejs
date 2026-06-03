@@ -1,0 +1,52 @@
+<%- include('../partials/header') %>
+<div class="admin-layout">
+  <%- include('sidebar') %>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 class="admin-title">Products</h1>
+      <div class="flex gap-10">
+        <button class="btn btn-outline btn-sm" id="adminToggle"><i class="fas fa-bars"></i> Menu</button>
+        <a href="/admin/products/new" class="btn btn-primary"><i class="fas fa-plus"></i> New Product</a>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Image</th><th>Title</th><th>Price</th><th>Category</th><th>Sales</th><th>Active</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% if (products.length > 0) { %>
+            <% products.forEach(function(p) { %>
+              <tr>
+                <td>
+                  <% if (p.image) { %>
+                    <img src="<%= p.image %>" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                  <% } else { %>
+                    <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);border-radius:4px;color:var(--text-muted);"><i class="fas fa-file"></i></div>
+                  <% } %>
+                </td>
+                <td><strong><%= p.title %></strong></td>
+                <td>$<%= parseFloat(p.price).toFixed(2) %></td>
+                <td><%= p.Category ? p.Category.name : '-' %></td>
+                <td><%= p.salesCount || 0 %></td>
+                <td><%= p.isActive ? 'Yes' : 'No' %></td>
+                <td>
+                  <div class="flex gap-10">
+                    <a href="/admin/products/edit/<%= p.id %>" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+                    <form method="POST" action="/admin/products/delete/<%= p.id %>" onsubmit="return confirm('Delete this product?')">
+                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No products yet. <a href="/admin/products/new">Create one</a>.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

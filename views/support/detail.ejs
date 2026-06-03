@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <a href="/support" class="btn btn-outline mb-20"><i class="fas fa-arrow-left"></i> Back to Tickets</a>
+
+  <div class="card" style="padding:30px;margin-bottom:20px;">
+    <div class="flex-between mb-20">
+      <h3 style="font-weight:700;"><%= ticket.subject %></h3>
+      <span class="order-status status-<%= ticket.status === 'open' ? 'pending' : (ticket.status === 'replied' ? 'completed' : 'cancelled') %>">
+        <%= ticket.status %>
+      </span>
+    </div>
+
+    <div style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;">
+      <i class="fas fa-calendar"></i> <%= new Date(ticket.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+      &nbsp;&nbsp;<i class="fas fa-flag"></i> <%= ticket.priority %> priority
+    </div>
+
+    <div style="padding:20px;background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:20px;white-space:pre-wrap;line-height:1.6;">
+      <%= ticket.message %>
+    </div>
+
+    <% if (ticket.adminReply) { %>
+      <div style="border-left:3px solid var(--text-primary);padding:20px;background:var(--bg-hover);border-radius:var(--radius);">
+        <p style="font-weight:600;margin-bottom:10px;"><i class="fas fa-reply"></i> Admin Response</p>
+        <p style="white-space:pre-wrap;line-height:1.6;color:var(--text-secondary);"><%= ticket.adminReply %></p>
+        <% if (ticket.repliedAt) { %>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:10px;"><%= new Date(ticket.repliedAt).toLocaleDateString() %></p>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div style="text-align:center;padding:30px;color:var(--text-muted);">
+        <i class="fas fa-clock" style="font-size:36px;margin-bottom:10px;display:block;"></i>
+        Waiting for a response from our team.
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
