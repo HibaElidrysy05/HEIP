@@ -168,8 +168,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       document.getElementById('confirmCancel').addEventListener('click', closeModal);
       document.getElementById('confirmOk').addEventListener('click', function() {
+        var cb = window._confirmCallback;
         closeModal();
-        if (window._confirmCallback) window._confirmCallback();
+        if (cb) cb();
       });
     }
     document.getElementById('confirmModalMsg').textContent = message;
