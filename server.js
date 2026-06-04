@@ -147,6 +147,13 @@ async function autoSeed() {
 
 async function start() {
   try {
+    // Ensure upload directories exist
+    const dirs = ['public/uploads/products', 'public/uploads/banners', 'public/logos'];
+    dirs.forEach(dir => {
+      const p = path.join(__dirname, dir);
+      if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+    });
+
     await sequelize.sync({ force: false });
     console.log('Database synced');
     await autoSeed();

@@ -337,7 +337,15 @@ router.get('/settings', async (req, res) => {
   res.render('admin/settings', { title: 'Settings - HEIP Admin', settings: settingsMap });
 });
 
-router.post('/settings', uploadLogo.single('logo'), async (req, res) => {
+router.post('/settings', (req, res, next) => {
+  uploadLogo.single('logo')(req, res, function(err) {
+    if (err) {
+      req.flash('error', 'Upload error: ' + err.message);
+      return res.redirect('/admin/settings');
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const allowedKeys = ['site_name', 'site_description', 'footer_text', 'footer_email', 'footer_phone', 'footer_address', 'social_facebook', 'social_twitter', 'social_instagram', 'currency', 'about_text', 'terms_text', 'privacy_text', 'contact_email'];
     for (const key of allowedKeys) {
