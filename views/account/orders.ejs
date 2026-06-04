@@ -19,14 +19,12 @@
           <span><i class="fas fa-credit-card"></i> <%= order.paymentMethod %></span>
         </div>
         <div class="order-actions">
-          <% if (order.status === 'completed') { %>
-            <span class="btn btn-outline btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt'">
-              <i class="fas fa-receipt"></i> Receipt
-            </span>
-            <span class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt/pdf'">
-              <i class="fas fa-file-pdf"></i> PDF
-            </span>
-          <% } %>
+          <span class="btn btn-outline btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt'">
+            <i class="fas fa-receipt"></i> Receipt
+          </span>
+          <span class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location='/account/orders/<%= order.id %>/receipt/pdf'">
+            <i class="fas fa-file-pdf"></i> PDF
+          </span>
           <% if (order.status === 'pending') { %>
             <form method="POST" action="/account/orders/<%= order.id %>/cancel" onclick="event.stopPropagation();">
               <button type="submit" class="btn btn-danger btn-sm" data-confirm="Cancel this order?">
